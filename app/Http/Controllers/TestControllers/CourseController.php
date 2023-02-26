@@ -49,7 +49,7 @@ class CourseController extends Controller
         // Get input values [we need to get user id from jwt]
         $data = [
             'cr_title' => $request->input('title'),
-            'cr_description' => $request->input('descrption')
+            'cr_description' => $request->input('description')
         ];
 
         $course = Course::create($data);
@@ -168,7 +168,7 @@ class CourseController extends Controller
 
         $course = Course::where('cr_id', $cr_id)->first();
 
-        $course->user()->dettach($user);
+        $course->user()->detach($user);
 
         return response()->json([
             "message" => "unregistered user successfully",

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\TestControllers;
 
 use Illuminate\Http\Request;
 use Validator;
-use App\Models\AuthModel\Todo;
+use App\Models\TestModel\Todo;
 use App\Http\Controllers\Controller;
 
 class TodoController extends Controller
@@ -39,17 +39,17 @@ class TodoController extends Controller
             'description.required' => 'The description param value is required',
         ]);
 
-        if($validator->fails()) {
-            return response()->json([
-                "message" => $validator->errors()->first()
-            ]);
-        }
+        // if($validator->fails()) {
+        //     return response()->json([
+        //         "message" => $validator->errors()->first()
+        //     ]);
+        // }
 
         // Get input values [we need to get user id from jwt]
         $data = [
             'td_title' => $request->input('title'),
             'td_user_id' => 1,
-            'td_description' => $request->input('descrption'),
+            'td_description' => $request->input('description'),
             'td_status' => 'o'
         ];
 
@@ -94,7 +94,7 @@ class TodoController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:o,p,c'
+            'status' => 'in:o,p,c'
         ], [
             'status.in' => 'Incorrect status value',
         ]);
@@ -105,9 +105,9 @@ class TodoController extends Controller
             ]);
         }
 
-        if(!empty($request->input('title'))) $data['ar_title'] = $request->input('title');
-        if(!empty($request->input('description'))) $data['ar_description'] = $request->input('description');
-        if(!empty($request->input('status'))) $data['ar_status'] = $request->input('status');
+        if(!empty($request->input('title'))) $data['td_title'] = $request->input('title');
+        if(!empty($request->input('description'))) $data['td_description'] = $request->input('description');
+        if(!empty($request->input('status'))) $data['td_status'] = $request->input('status');
 
         if(Todo::where('td_id', $id)->exists()) {
             Todo::where('td_id', $id)->update($data);

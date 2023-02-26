@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\TestControllers;
 
 use Illuminate\Http\Request\TestControllers;
 use Validator;

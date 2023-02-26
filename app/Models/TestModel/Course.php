@@ -8,5 +8,5 @@ use App\Models\Course as BaseCourse;
 
 class Course extends BaseCourse
 {
-    protected $connection= 'sqlite';
+    protected $connection= 'mysql_test';
 }

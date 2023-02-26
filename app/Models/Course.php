@@ -9,6 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'cr_id';
     /**
      *  Created at column
      */
@@ -29,7 +30,7 @@ class Course extends Model
         'cr_description',
     ];
 
-    public function article() {
-        return $this->belongsTo(Article::class, 'ar_id', 'cm_ar_id');
+    public function user() {
+        return $this->belongsToMany(User::class, 'course_user', 'course_id', 'user_id');
     }
 }

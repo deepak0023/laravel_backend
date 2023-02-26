@@ -9,6 +9,7 @@ class Article extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'ar_id';
     /**
      *  Created at column
      */
@@ -35,6 +36,6 @@ class Article extends Model
     }
 
     public function comment() {
-        return $this->hasMany(Comment::class, 'ar_td_id', 'ar_id');
+        return $this->hasMany(Comment::class, 'cm_ar_id', 'ar_id');
     }
 }

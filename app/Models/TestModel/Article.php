@@ -8,5 +8,5 @@ use App\Models\Article as BaseArticle;
 
 class Article extends BaseArticle
 {
-    protected $connection= 'sqlite';
+    protected $connection= 'mysql_test';
 }

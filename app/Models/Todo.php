@@ -9,6 +9,7 @@ class Todo extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'td_id';
     /**
      *  Created at column
      */

@@ -8,5 +8,5 @@ use App\Models\Todo as BaseTodo;
 
 class Todo extends BaseTodo
 {
-    protected $connection= 'sqlite';
+    protected $connection= 'mysql_test';
 }

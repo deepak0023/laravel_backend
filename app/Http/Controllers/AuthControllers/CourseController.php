@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\TestControllers;
+namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
 use Validator;
@@ -59,7 +59,7 @@ class CourseController extends Controller
         // Get input values [we need to get user id from jwt]
         $data = [
             'cr_title' => $request->input('title'),
-            'cr_description' => $request->input('descrption')
+            'cr_description' => $request->input('description')
         ];
 
         $course = Course::create($data);
@@ -152,7 +152,7 @@ class CourseController extends Controller
      */
     public function registerUser($cr_id) {
 
-        $user = User::find(auth()->user->id);
+        $user = User::find(auth()->user()->id);
 
         $course = Course::where('cr_id', $cr_id)->first();
 
@@ -172,11 +172,11 @@ class CourseController extends Controller
      */
     public function unregisterUser($cr_id) {
 
-        $user = User::find(auth()->user->id);
+        $user = User::find(auth()->user()->id);
 
         $course = Course::where('cr_id', $cr_id)->first();
 
-        $course->user()->dettach($user);
+        $course->user()->detach($user);
 
         return response()->json([
             "message" => "unregistered user successfully",

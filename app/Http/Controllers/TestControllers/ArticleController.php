@@ -49,7 +49,7 @@ class ArticleController extends Controller
         $data = [
             'ar_title' => $request->input('title'),
             'ar_user_id' => 1,
-            'ar_description' => $request->input('descrption')
+            'ar_description' => $request->input('description')
         ];
 
         $article = Article::create($data);

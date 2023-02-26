@@ -9,6 +9,7 @@ class Comment extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'cm_id';
     /**
      *  Created at column
      */

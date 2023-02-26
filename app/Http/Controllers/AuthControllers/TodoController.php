@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\TestControllers;
+namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
 use Validator;
@@ -61,7 +61,7 @@ class TodoController extends Controller
         $data = [
             'td_title' => $request->input('title'),
             'td_user_id' => $user->id,
-            'td_description' => $request->input('descrption'),
+            'td_description' => $request->input('description'),
             'td_status' => 'o'
         ];
 
@@ -106,7 +106,7 @@ class TodoController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:o,p,c'
+            'status' => 'in:o,p,c'
         ], [
             'status.in' => 'Incorrect status value',
         ]);
@@ -117,9 +117,9 @@ class TodoController extends Controller
             ]);
         }
 
-        if(!empty($request->input('title'))) $data['ar_title'] = $request->input('title');
-        if(!empty($request->input('description'))) $data['ar_description'] = $request->input('description');
-        if(!empty($request->input('status'))) $data['ar_status'] = $request->input('status');
+        if(!empty($request->input('title'))) $data['td_title'] = $request->input('title');
+        if(!empty($request->input('description'))) $data['td_description'] = $request->input('description');
+        if(!empty($request->input('status'))) $data['td_status'] = $request->input('status');
 
         if(Todo::where('td_id', $id)->exists()) {
             Todo::where('td_id', $id)->update($data);

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\AuthControllers;
+namespace App\Http\Controllers\TestControllers;
 
 use Illuminate\Http\Request;
 use Validator;
-use App\Models\AuthModel\Comment;
-use App\Models\AuthModel\Article;
+use App\Models\TestModel\Comment;
+use App\Models\TestModel\Article;
 use App\Http\Controllers\Controller;
 
 class CommentController extends Controller
