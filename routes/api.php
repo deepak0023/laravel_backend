@@ -29,6 +29,8 @@ Route::group(['prefix' => 'v1', 'namespace'=>'App\Http\Controllers\TestControlle
     Route::post('course/{cr_id}/register', 'CourseController@registerUser')->name('course.register');
     Route::delete('course/{cr_id}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
 
+    Route::post('user/{user_id}/setrole', 'UserController@setUserRole')->name('user.setrole');
+
     Route::post('test_file', 'TestFileController@processFileInput')->name('testfile.processfileinput');
     Route::post('test_soap', 'TestSoapController@processSoapRequest')->name('testsoap.processsoaprequest');
 });
@@ -41,9 +43,10 @@ Route::group(['prefix' => 'v2', 'namespace'=>'App\Http\Controllers\AuthControlle
     Route::resource('course', 'CourseController', [ 'except' => ['edit', 'create'] ]);
     Route::resource('article/{ar_id}/comment', 'CommentController', [ 'except' => ['edit', 'create'] ]);
 
+    Route::post('user/{user_id}/setrole', 'UserController@setUserRole')->name('user.setrole');
+
     Route::post('course/{cr_id}/register', 'CourseController@registerUser')->name('course.register');
     Route::delete('course/{cr_id}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
-
 });
 
 Route::group([

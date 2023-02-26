@@ -34,7 +34,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|unique:users,email',
-            'password' => 'required'
+            'password' => 'required',
         ], [
             'name.required' => 'The name is required',
             'email.required' => 'The email is required',
@@ -151,6 +151,43 @@ class UserController extends Controller
 
         return response()->json([
             "message" => "User deleted successfully",
+        ], 200);
+    }
+
+    /**
+     * Update role id for user [intentded for admin operation].
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function setUserRole(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'role_id' => 'in:1,2'
+        ], [
+            'role_id.in' => 'Incorrect role id value',
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                "message" => $validator->errors()->first()
+            ]);
+        }
+
+        $role_id = $request->input('role_id');
+
+        if(User::where('id', $id)->exists()) {
+            User::where('id', $id)->update(['user_rl_id' => $role_id]);
+        } else {
+            return response()->json([
+                "message" => "No User for the mentioned id",
+                "data" => []
+            ], 200);
+        }
+
+        return response()->json([
+            "message" => "User role id updated successfully",
+            "data" => User::where('id', $id)->first()
         ], 200);
     }
 }
