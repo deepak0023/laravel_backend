@@ -18,6 +18,14 @@
 * Update the existing todo under a user
 * Delete a specific todo under a user
 
+### Article Resource
+
+* Read the list of article under a user
+* Read a specific article under a user
+* Create a new article under a user
+* Update the existing article under a user
+* Delete a specific article under a user
+
 ### Comment Resource
 
 * Read the list of comment under a todo item
