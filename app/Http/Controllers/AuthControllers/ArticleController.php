@@ -78,17 +78,8 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Article $article)
     {
-        if(Article::where('ar_id', $id)->exists()) {
-            $article = Article::where('ar_id', $id)->first();
-        } else {
-            return response()->json([
-                "message" => "No article for the mentioned id",
-                "data" => []
-            ], 200);
-        }
-
         return response()->json([
             "message" => "success",
             "data"    => $article
@@ -102,21 +93,23 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Article $article)
     {
+        try {
+            $this->authorize('update', $article);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
+        }
+
         if(!empty($request->input('title'))) $data['ar_title'] = $request->input('title');
         if(!empty($request->input('description'))) $data['ar_description'] = $request->input('description');
 
-        if(Article::where('ar_id', $id)->exists()) {
-            Article::where('ar_id', $id)->update($data);
-        } else {
-            return response()->json([
-                "message" => "No article for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        Article::where('ar_id', $article->ar_id)->update($data);
 
-        $article_data = Article::where('ar_id', $id)->get();
+        $article_data = Article::where('ar_id', $article->ar_id)->get();
 
         return response()->json([
             "message" => "Article updated successfully",
@@ -130,16 +123,18 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
-        if(Article::where('ar_id', $id)->exists()) {
-            Article::where('ar_id', $id)->delete();
-        } else {
+        try {
+            $this->authorize('delete', $article);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No article for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
         }
+
+        $article->delete();
 
         return response()->json([
             "message" => "Article deleted successfully",

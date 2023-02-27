@@ -26,6 +26,15 @@ class TodoController extends Controller
      */
     public function index()
     {
+        try {
+            $this->authorize('viewAny', Todo::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $todos = Todo::all();
         return response()->json([
             "message" => "successfully fetched all todos data",
@@ -79,15 +88,15 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Todo $todo)
     {
-        if(Todo::where('td_id', $id)->exists()) {
-            $todo = Todo::where('td_id', $id)->first();
-        } else {
+        try {
+            $this->authorize('view', $todo);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No todo for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
 
         return response()->json([
@@ -103,8 +112,17 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Todo $todo)
     {
+        try {
+            $this->authorize('update', $todo);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'status' => 'in:o,p,c'
         ], [
@@ -121,16 +139,9 @@ class TodoController extends Controller
         if(!empty($request->input('description'))) $data['td_description'] = $request->input('description');
         if(!empty($request->input('status'))) $data['td_status'] = $request->input('status');
 
-        if(Todo::where('td_id', $id)->exists()) {
-            Todo::where('td_id', $id)->update($data);
-        } else {
-            return response()->json([
-                "message" => "No todo for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        Todo::where('td_id', $todo->id)->update($data);
 
-        $todo_data = Todo::where('td_id', $id)->get();
+        $todo_data = Todo::where('td_id', $todo->id)->get();
 
         return response()->json([
             "message" => "Todo updated successfully",
@@ -144,16 +155,18 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Todo $todo)
     {
-        if(Todo::where('td_id', $id)->exists()) {
-            Todo::where('td_id', $id)->delete();
-        } else {
+        try {
+            $this->authorize('delete', $todo);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No todo for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
+
+        Todo::where('td_id', $todo->td_id)->delete();
 
         return response()->json([
             "message" => "Todo deleted successfully",

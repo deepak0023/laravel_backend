@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;
+use App\Models\AuthModel\User;
+use App\Models\Role;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -13,7 +15,11 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\AuthModel\Course' => 'App\Policies\CoursePolicy',
+        'App\Models\AuthModel\Article' => 'App\Policies\ArticlePolicy',
+        'App\Models\AuthModel\Comments' => 'App\Policies\CommentsPolicy',
+        'App\Models\AuthModel\Todo' => 'App\Policies\TodoPolicy',
+        'App\Models\AuthModel\User' => 'App\Policies\User'
     ];
 
     /**
@@ -25,6 +31,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('register_course', fn(User $user) => $user->user_rl_id === Role::IS_USER);
+        Gate::define('unregister_course', fn(User $user) => $user->user_rl_id === Role::IS_USER);
+        Gate::define('set_user_role', fn(User $user) => $user->user_rl_id === Role::IS_ADMIN);
+
     }
 }

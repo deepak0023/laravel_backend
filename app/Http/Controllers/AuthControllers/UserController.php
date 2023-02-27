@@ -26,6 +26,15 @@ class UserController extends Controller
      */
     public function index()
     {
+        try {
+            $this->authorize('viewAny', User::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $users = User::all();
         return response()->json([
             "message" => "successfully fetched all users data",
@@ -81,16 +90,18 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        if(User::where('id', $id)->exists()) {
-            $user = User::where('id', $id)->first();
-        } else {
+        try {
+            $this->authorize('view', $user);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No user for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
+
+        $user = User::where('id', $user->id)->first();
 
         return response()->json([
             "message" => "success",
@@ -105,10 +116,19 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
+        try {
+            $this->authorize('update', $user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
-            'email' => 'unique:users,email,'.$id,
+            'email' => 'unique:users,email,'.$user->id,
         ], [
             'email.unique' => 'The email already exists in the system',
         ]);
@@ -125,16 +145,9 @@ class UserController extends Controller
         if(!empty($request->input('email'))) $data['email'] = $request->input('email');
         if(!empty($request->input('password'))) $data['password'] = bcrypt($request->input('password'));
 
-        if(User::where('id', $id)->exists()) {
-            User::where('id', $id)->update($data);
-        } else {
-            return response()->json([
-                "message" => "No user for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        User::where('id', $user->id)->update($data);
 
-        $user_data = User::where('id', $id)->get();
+        $user_data = User::where('id', $user->id)->get();
 
         return response()->json([
             "message" => "User updated successfully",
@@ -148,16 +161,18 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        if(User::where('id', $id)->exists()) {
-            User::where('id', $id)->delete();
-        } else {
+        try {
+            $this->authorize('delete', $user);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No User for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
+
+        User::where('id', $user->id)->delete();
 
         return response()->json([
             "message" => "User deleted successfully",
@@ -170,8 +185,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function setUserRole(Request $request, $id)
+    public function setUserRole(Request $request, User $user)
     {
+        try {
+            $this->authorize('set_user_roles');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'role_id' => 'in:1,2'
         ], [
@@ -186,18 +210,11 @@ class UserController extends Controller
 
         $role_id = $request->input('role_id');
 
-        if(User::where('id', $id)->exists()) {
-            User::where('id', $id)->update(['user_rl_id' => $role_id]);
-        } else {
-            return response()->json([
-                "message" => "No User for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        User::where('id', $user->id)->update(['user_rl_id' => $role_id]);
 
         return response()->json([
             "message" => "User role id updated successfully",
-            "data" => User::where('id', $id)->first()
+            "data" => User::where('id', $user->id)->first()
         ], 200);
     }
 }

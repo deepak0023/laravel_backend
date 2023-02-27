@@ -9,6 +9,9 @@ class Role extends Model
 {
     use HasFactory;
 
+    public const IS_ADMIN = 1;
+    public const IS_USER = 2;
+
     protected $primaryKey = 'rl_id';
     /**
      *  Created at column

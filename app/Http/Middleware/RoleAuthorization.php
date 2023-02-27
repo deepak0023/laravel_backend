@@ -34,7 +34,7 @@ class RoleAuthorization
 
         $role_ids = Role::whereIn('rl_name', $roles)->pluck('rl_id')->toArray();
 
-        if ($user && in_array($user->role, $role_ids)) {
+        if ($user && in_array($user->user_rl_id, $role_ids)) {
             return $next($request);
         }
 

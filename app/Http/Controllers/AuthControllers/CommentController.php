@@ -25,10 +25,8 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($ar_id)
+    public function index(Article $article)
     {
-        $article =  Article::where('ar_id', $ar_id)->first();
-
         return response()->json([
             "message" => "successfully fetched all comments for the article",
             "data"    => $article->comment()->get()
@@ -41,7 +39,7 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $ar_id)
+    public function store(Request $request, Article $article)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -56,8 +54,6 @@ class CommentController extends Controller
                 "message" => $validator->errors()->first()
             ]);
         }
-
-        $article = Article::where('ar_id', $ar_id)->first();
 
         // Get input values
         $comment = new Comment([
@@ -79,19 +75,9 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($ar_id, $id)
+    public function show(Article $article, Comment $comment)
     {
-        if(Comment::where('cm_id', $id)->exists()) {
-
-            $article = Article::where('ar_id', $ar_id)->with('comment')->first();
-            $article_comment = $article->comment()->where('cm_id', $id)->first();
-
-        } else {
-            return response()->json([
-                "message" => "No Comment item for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        $article_comment = $article->comment()->where('cm_id', $$comment->cm_id)->first();
 
         return response()->json([
             "message" => "success",
@@ -106,29 +92,27 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $ar_id, $id)
+    public function update(Request $request, Article $article, Comment $comment)
     {
+        try {
+            $this->authorize('update', $comment);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
+        }
+
         $data = [];
 
         if(!empty($request->input('title'))) $data['cm_title'] = $request->input('title');
         if(!empty($request->input('description'))) $data['cm_description'] = $request->input('description');
 
-        if(Comment::where('cm_id', $id)->exists()) {
-
-            $article = Article::where('ar_id', $ar_id)->first();
-
-            $article_comment = $article->comment()->where('cm_id', $id)->update($data);
-
-        } else {
-            return response()->json([
-                "message" => "No comment item for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        $article->comment()->where('cm_id', $comment->cm_id)->update($data);
 
         return response()->json([
             "message" => "Comment item updated successfully",
-            "data"    => $article->comment()->where('cm_id', $id)->first()
+            "data"    => $article->comment()->where('cm_id', $comment->cm_id)->first()
         ], 200);
     }
 
@@ -138,20 +122,18 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($ar_id, $id)
+    public function destroy(Article $article, Comment $comment)
     {
-        if(Comment::where('cm_id', $id)->exists()) {
-
-            $article = Article::where('ar_id', $ar_id)->first();
-
-            $article->comment()->where('cm_id', $id)->delete();
-
-        } else {
+        try {
+            $this->authorize('update', $comment);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No comment item for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
         }
+
+        $article->comment()->where('cm_id', $comment->cm_id)->delete();
 
         return response()->json([
             "message" => "Comment item deleted successfully",

@@ -18,8 +18,6 @@ class CourseController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-        $this->middleware('auth.role:Admin');
-        $this->middleware('auth.role:Admin,User', ['only' => ['registerUser', 'unregisterUser']]);
     }
 
     /**
@@ -44,6 +42,15 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $this->authorize('create', Course::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
@@ -78,15 +85,15 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Course $course)
     {
-        if(Course::where('cr_id', $id)->exists()) {
-            $course = Course::where('cr_id', $id)->first();
-        } else {
+        try {
+            $this->authorize('view', $course);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No course for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
 
         return response()->json([
@@ -102,21 +109,23 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Course $course)
     {
+        try {
+            $this->authorize('update', $course);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
         if(!empty($request->input('title'))) $data['cr_title'] = $request->input('title');
         if(!empty($request->input('description'))) $data['cr_description'] = $request->input('description');
 
-        if(Course::where('cr_id', $id)->exists()) {
-            Course::where('cr_id', $id)->update($data);
-        } else {
-            return response()->json([
-                "message" => "No course for the mentioned id",
-                "data" => []
-            ], 200);
-        }
+        Course::where('cr_id', $course->cr_id)->update($data);
 
-        $course_data = Course::where('cr_id', $id)->get();
+        $course_data = Course::where('cr_id', $course->cr_id)->first();
 
         return response()->json([
             "message" => "Course updated successfully",
@@ -130,16 +139,18 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Course $course)
     {
-        if(Course::where('cr_id', $id)->exists()) {
-            Course::where('cr_id', $id)->delete();
-        } else {
+        try {
+            $this->authorize('delete', $course);
+        } catch (\Exception $e) {
             return response()->json([
-                "message" => "No course for the mentioned id",
-                "data" => []
-            ], 200);
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
         }
+
+        Course::where('cr_id', $course->id)->delete();
 
         return response()->json([
             "message" => "course deleted successfully",
@@ -152,11 +163,18 @@ class CourseController extends Controller
      * @param [type] $cr_id
      * @return void
      */
-    public function registerUser($cr_id) {
+    public function registerUser(Course $course) {
+
+        try {
+            $this->authorize('register_course');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
+        }
 
         $user = User::find(auth()->user()->id);
-
-        $course = Course::where('cr_id', $cr_id)->first();
 
         $course->user()->attach($user);
 
@@ -172,11 +190,18 @@ class CourseController extends Controller
      * @param [type] $cr_id
      * @return void
      */
-    public function unregisterUser($cr_id) {
+    public function unregisterUser(Course $course) {
+
+        try {
+            $this->authorize('unregister_course');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to do this action'
+            ], 403);
+        }
 
         $user = User::find(auth()->user()->id);
-
-        $course = Course::where('cr_id', $cr_id)->first();
 
         $course->user()->detach($user);
 
