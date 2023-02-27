@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TestControllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\TestModel\Article;
+use App\Models\TestModel\User;
 use App\Http\Controllers\Controller;
 
 class ArticleController extends Controller
@@ -131,6 +132,21 @@ class ArticleController extends Controller
 
         return response()->json([
             "message" => "Article deleted successfully",
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listUserArticleList()
+    {
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->article()->get()
         ], 200);
     }
 }

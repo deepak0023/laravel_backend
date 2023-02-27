@@ -125,7 +125,7 @@ class CommentController extends Controller
     public function destroy(Article $article, Comment $comment)
     {
         try {
-            $this->authorize('update', $comment);
+            $this->authorize('delete', $comment);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

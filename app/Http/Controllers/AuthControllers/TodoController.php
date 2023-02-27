@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\AuthModel\Todo;
 use App\Http\Controllers\Controller;
+use App\Models\AuthModel\User;
 
 class TodoController extends Controller
 {
@@ -170,6 +171,30 @@ class TodoController extends Controller
 
         return response()->json([
             "message" => "Todo deleted successfully",
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listUserTodoList()
+    {
+        try {
+            $this->authorize('list_user_todo', Todo::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->todo()->get()
         ], 200);
     }
 }

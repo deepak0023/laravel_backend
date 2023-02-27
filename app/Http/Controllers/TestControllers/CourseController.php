@@ -175,4 +175,19 @@ class CourseController extends Controller
             "data" => $user->course()->get()
         ], 200);
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listUserCourseList()
+    {
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->course()->get()
+        ], 200);
+    }
 }

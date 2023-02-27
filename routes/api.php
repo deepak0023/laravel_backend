@@ -29,10 +29,12 @@ Route::group(['prefix' => 'v1', 'namespace'=>'App\Http\Controllers\TestControlle
     Route::post('course/{cr_id}/register', 'CourseController@registerUser')->name('course.register');
     Route::delete('course/{cr_id}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
 
-    Route::post('user/{user_id}/setrole', 'UserController@setUserRole')->name('user.setrole');
-
     Route::post('test_file', 'TestFileController@processFileInput')->name('testfile.processfileinput');
     Route::post('test_soap', 'TestSoapController@processSoapRequest')->name('testsoap.processsoaprequest');
+
+    Route::get('todo/list', 'TodoController@getUserTodoList')->name('todo.getusertodolist');
+    Route::get('article/list', 'TodoController@getUserArticleList')->name('todo.getuserarticlelist');
+    Route::get('course/list', 'TodoController@getUserCourseList')->name('todo.getusercourselist');
 });
 
 Route::group(['prefix' => 'v2', 'namespace'=>'App\Http\Controllers\AuthControllers'], function() {
@@ -47,6 +49,10 @@ Route::group(['prefix' => 'v2', 'namespace'=>'App\Http\Controllers\AuthControlle
 
     Route::post('course/{cr_id}/register', 'CourseController@registerUser')->name('course.register');
     Route::delete('course/{cr_id}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
+
+    Route::get('todo/list', 'TodoController@getUserTodoList')->name('todo.getusertodolist');
+    Route::get('article/list', 'TodoController@getUserArticleList')->name('todo.getuserarticlelist');
+    Route::get('course/list', 'TodoController@getUserCourseList')->name('todo.getusercourselist');
 });
 
 Route::group([

@@ -33,7 +33,17 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('register_course', fn(User $user) => $user->user_rl_id === Role::IS_USER);
         Gate::define('unregister_course', fn(User $user) => $user->user_rl_id === Role::IS_USER);
+
         Gate::define('set_user_role', fn(User $user) => $user->user_rl_id === Role::IS_ADMIN);
 
+        Gate::define('list_user_todo', function(User $user) {
+            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+        });
+        Gate::define('list_user_article', function(User $user) {
+            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+        });
+        Gate::define('list_user_courses', function(User $user) {
+            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+        });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TestControllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\TestModel\Todo;
+use App\Models\TestModel\User;
 use App\Http\Controllers\Controller;
 
 class TodoController extends Controller
@@ -145,6 +146,21 @@ class TodoController extends Controller
 
         return response()->json([
             "message" => "Todo deleted successfully",
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listUserTodoList()
+    {
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->todo()->get()
         ], 200);
     }
 }

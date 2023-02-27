@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\AuthModel\Article;
 use App\Http\Controllers\Controller;
+use App\Models\AuthModel\User;
 
 class ArticleController extends Controller
 {
@@ -138,6 +139,30 @@ class ArticleController extends Controller
 
         return response()->json([
             "message" => "Article deleted successfully",
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listUserArticleList()
+    {
+        try {
+            $this->authorize('list_user_todo', Todo::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->article()->get()
         ], 200);
     }
 }
