@@ -26,6 +26,7 @@ class Comment extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'cm_user_id',
         'cm_ar_id',
         'cm_title',
         'cm_description'
@@ -33,5 +34,9 @@ class Comment extends Model
 
     public function article() {
         return $this->belongsTo(Article::class, 'ar_id', 'cm_ar_id');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'cm_user_id', 'id');
     }
 }

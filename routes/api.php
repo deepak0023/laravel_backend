@@ -43,7 +43,7 @@ Route::group(['prefix' => 'v2', 'namespace'=>'App\Http\Controllers\AuthControlle
     Route::resource('todo', 'TodoController', [ 'except' => ['edit', 'create'] ]);
     Route::resource('article', 'ArticleController', [ 'except' => ['edit', 'create'] ]);
     Route::resource('course', 'CourseController', [ 'except' => ['edit', 'create'] ]);
-    Route::resource('article/{ar_id}/comment', 'CommentController', [ 'except' => ['edit', 'create'] ]);
+    Route::resource('article/{article}/comment', 'CommentController', [ 'except' => ['edit', 'create'] ]);
 
     Route::post('user/{user}/setrole', 'UserController@setUserRole')->name('user.setrole');
 

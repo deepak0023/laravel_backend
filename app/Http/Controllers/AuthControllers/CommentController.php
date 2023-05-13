@@ -57,6 +57,7 @@ class CommentController extends Controller
 
         // Get input values
         $comment = new Comment([
+            'cm_user_id' => auth()->user()->id,
             'cm_title' => $request->input('title'),
             'cm_description' => $request->input('description'),
         ]);
@@ -77,7 +78,7 @@ class CommentController extends Controller
      */
     public function show(Article $article, Comment $comment)
     {
-        $article_comment = $article->comment()->where('cm_id', $$comment->cm_id)->first();
+        $article_comment = $article->comment()->where('cm_id', $comment->cm_id)->first();
 
         return response()->json([
             "message" => "success",

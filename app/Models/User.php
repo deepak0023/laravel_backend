@@ -57,6 +57,10 @@ class User extends Authenticatable
     }
 
     public function roles() {
-        return $this->belongsTo(Roles::class, 'user_rl_id', 'rl_id');
+        return $this->belongsTo(Role::class, 'user_rl_id', 'rl_id');
+    }
+
+    public function comments() {
+        return $this->hasMany(Comment::class, 'cm_user_id', 'id');
     }
 }
