@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\AuthModel\Article;
 use App\Http\Controllers\Controller;
 use App\Models\AuthModel\User;
@@ -108,13 +108,11 @@ class ArticleController extends Controller
         if(!empty($request->input('title'))) $data['ar_title'] = $request->input('title');
         if(!empty($request->input('description'))) $data['ar_description'] = $request->input('description');
 
-        Article::where('ar_id', $article->ar_id)->update($data);
-
-        $article_data = Article::where('ar_id', $article->ar_id)->get();
+        $article->update($data);
 
         return response()->json([
             "message" => "Article updated successfully",
-            "data"    => $article_data
+            "data"    => $article->where('ar_id', $article->ar_id)->get()
         ], 200);
     }
 
@@ -147,10 +145,10 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function listUserArticleList()
+    public function getUserArticleList()
     {
         try {
-            $this->authorize('list_user_todo', Todo::class);
+            $this->authorize('list_user_articles', Todo::class);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

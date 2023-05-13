@@ -145,13 +145,11 @@ class UserController extends Controller
         if(!empty($request->input('email'))) $data['email'] = $request->input('email');
         if(!empty($request->input('password'))) $data['password'] = bcrypt($request->input('password'));
 
-        User::where('id', $user->id)->update($data);
-
-        $user_data = User::where('id', $user->id)->get();
+        $user->update($data);
 
         return response()->json([
             "message" => "User updated successfully",
-            "data"    => $user_data
+            "data"    => $user->where('id', $user->id)->get()
         ], 200);
     }
 
@@ -172,7 +170,7 @@ class UserController extends Controller
             ], 403);
         }
 
-        User::where('id', $user->id)->delete();
+        $user->delete();
 
         return response()->json([
             "message" => "User deleted successfully",
@@ -188,7 +186,7 @@ class UserController extends Controller
     public function setUserRole(Request $request, User $user)
     {
         try {
-            $this->authorize('set_user_roles');
+            $this->authorize('set_user_role');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -208,13 +206,11 @@ class UserController extends Controller
             ]);
         }
 
-        $role_id = $request->input('role_id');
-
-        User::where('id', $user->id)->update(['user_rl_id' => $role_id]);
+        $user->update(['user_rl_id' => $request->role_id]);
 
         return response()->json([
             "message" => "User role id updated successfully",
-            "data" => User::where('id', $user->id)->first()
+            "data" => $user
         ], 200);
     }
 }

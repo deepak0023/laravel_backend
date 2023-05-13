@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\AuthModel\Comment;
 use App\Models\AuthModel\Article;
 use App\Http\Controllers\Controller;

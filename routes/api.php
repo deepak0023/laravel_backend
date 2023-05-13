@@ -45,14 +45,14 @@ Route::group(['prefix' => 'v2', 'namespace'=>'App\Http\Controllers\AuthControlle
     Route::resource('course', 'CourseController', [ 'except' => ['edit', 'create'] ]);
     Route::resource('article/{ar_id}/comment', 'CommentController', [ 'except' => ['edit', 'create'] ]);
 
-    Route::post('user/{user_id}/setrole', 'UserController@setUserRole')->name('user.setrole');
+    Route::post('user/{user}/setrole', 'UserController@setUserRole')->name('user.setrole');
 
-    Route::post('course/{cr_id}/register', 'CourseController@registerUser')->name('course.register');
-    Route::delete('course/{cr_id}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
+    Route::post('course/{course}/register', 'CourseController@registerUser')->name('course.register');
+    Route::delete('course/{course}/unregister', 'CourseController@unregisterUser')->name('course.unregister');
 
-    Route::get('todo/list', 'TodoController@getUserTodoList')->name('todo.getusertodolist');
-    Route::get('article/list', 'TodoController@getUserArticleList')->name('todo.getuserarticlelist');
-    Route::get('course/list', 'TodoController@getUserCourseList')->name('todo.getusercourselist');
+    Route::get('/usertodo/list', 'TodoController@getUserTodoList')->name('todo.getusertodolist');
+    Route::get('/userarticle/list', 'ArticleController@getUserArticleList')->name('todo.getuserarticlelist');
+    Route::get('/usercourse/list', 'CourseController@getUserCourseList')->name('todo.getusercourselist');
 });
 
 Route::group([

@@ -18,7 +18,7 @@ return new class extends Migration
         if(!Schema::connection('sqlite')->hasTable('users')) {
             Schema::connection('sqlite')->create('users', function (Blueprint $table) {
                 $table->id();
-                $table->integer('user_rl_id')->unsigned()->default('2');
+                $table->integer('user_rl_id')->unsigned()->default('2'); // setting to normal user role
                 $table->string('name');
                 $table->string('email')->unique();
                 $table->timestamp('email_verified_at')->nullable();

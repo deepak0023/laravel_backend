@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\AuthModel\Course;
 use App\Models\AuthModel\User;
 use App\Http\Controllers\Controller;
@@ -123,13 +123,11 @@ class CourseController extends Controller
         if(!empty($request->input('title'))) $data['cr_title'] = $request->input('title');
         if(!empty($request->input('description'))) $data['cr_description'] = $request->input('description');
 
-        Course::where('cr_id', $course->cr_id)->update($data);
-
-        $course_data = Course::where('cr_id', $course->cr_id)->first();
+        $course->update($data);
 
         return response()->json([
             "message" => "Course updated successfully",
-            "data"    => $course_data
+            "data"    => $course->where('cr_id', $course->cr_id)->first()
         ], 200);
     }
 
@@ -150,7 +148,7 @@ class CourseController extends Controller
             ], 403);
         }
 
-        Course::where('cr_id', $course->id)->delete();
+        $course->delete();
 
         return response()->json([
             "message" => "course deleted successfully",
@@ -208,6 +206,30 @@ class CourseController extends Controller
         return response()->json([
             "message" => "unregistered user successfully",
             "data" => $user->course()->get()
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserCourseList()
+    {
+        try {
+            $this->authorize('list_user_courses', Todo::class);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are unauthorized to perform this action'
+            ], 403);
+        }
+
+        $user = User::find(auth()->user()->id);
+
+        return response()->json([
+            "message" => "successfully fetched all todos data",
+            "data"    => $user->course()->get()
         ], 200);
     }
 }

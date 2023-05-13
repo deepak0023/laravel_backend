@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Article;
 use App\Models\AuthModel\User;
+use App\Models\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ArticlePolicy
@@ -53,7 +54,11 @@ class ArticlePolicy
      */
     public function update(User $user, Article $article)
     {
-        //
+        if($user->user_rl_id == Role::IS_ADMIN) {
+            return true;
+        } else {
+            return $user->id == $article->ar_user_id;
+        }
     }
 
     /**
@@ -65,7 +70,11 @@ class ArticlePolicy
      */
     public function delete(User $user, Article $article)
     {
-        //
+        if($user->user_rl_id == Role::IS_ADMIN) {
+            return true;
+        } else {
+            return $user->id == $article->ar_user_id;
+        }
     }
 
     /**

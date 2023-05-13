@@ -36,14 +36,31 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('set_user_role', fn(User $user) => $user->user_rl_id === Role::IS_ADMIN);
 
-        Gate::define('list_user_todo', function(User $user) {
-            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+        Gate::define('list_user_todos', function(User $user) {
+            return $this->checkListUserEntitiesPermission($user->user_rl_id);
         });
-        Gate::define('list_user_article', function(User $user) {
-            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+        Gate::define('list_user_articles', function(User $user) {
+            return $this->checkListUserEntitiesPermission($user->user_rl_id);
         });
         Gate::define('list_user_courses', function(User $user) {
-            $user->user_rl_id === (Role::IS_ADMIN || Role::IS_USER);
+            return $this->checkListUserEntitiesPermission($user->user_rl_id);
         });
+    }
+
+    /**
+     * Function to get User entities permission
+     *
+     * @param [type] $user_role_id
+     * @return void
+     */
+    private function checkListUserEntitiesPermission ($user_role_id) {
+        switch(true) {
+            case ($user_role_id === Role::IS_ADMIN) :
+                return true; break;
+            case ($user_role_id === Role::IS_USER) :
+                return true; break;
+            default :
+                return false;
+        }
     }
 }

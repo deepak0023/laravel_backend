@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AuthControllers;
 
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use App\Models\AuthModel\Todo;
 use App\Http\Controllers\Controller;
 use App\Models\AuthModel\User;
@@ -51,13 +51,14 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Todo::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
         ], [
             'title.required' => 'The title param value is required',
             'description.required' => 'The description param value is required',
         ]);
+
 
         if($validator->fails()) {
             return response()->json([
@@ -140,13 +141,11 @@ class TodoController extends Controller
         if(!empty($request->input('description'))) $data['td_description'] = $request->input('description');
         if(!empty($request->input('status'))) $data['td_status'] = $request->input('status');
 
-        Todo::where('td_id', $todo->id)->update($data);
-
-        $todo_data = Todo::where('td_id', $todo->id)->get();
+        $todo->update($data);
 
         return response()->json([
             "message" => "Todo updated successfully",
-            "data"    => $todo_data
+            "data"    => $todo->where('td_id', $todo->td_id)->get()
         ], 200);
     }
 
@@ -167,7 +166,7 @@ class TodoController extends Controller
             ], 403);
         }
 
-        Todo::where('td_id', $todo->td_id)->delete();
+        $todo->delete();
 
         return response()->json([
             "message" => "Todo deleted successfully",
@@ -179,10 +178,10 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function listUserTodoList()
+    public function getUserTodoList()
     {
         try {
-            $this->authorize('list_user_todo', Todo::class);
+            $this->authorize('list_user_todos');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
